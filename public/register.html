@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - Secure Alert Login System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Create Account</h1>
+
+    <input type="email" id="regEmail" placeholder="Enter email">
+
+    <div class="password-box">
+      <input type="password" id="regPassword" placeholder="Enter password">
+      <span onclick="togglePassword('regPassword', this)">👁️</span>
+    </div>
+
+    <button onclick="registerUser()">Register</button>
+
+    <p id="message"></p>
+
+    <p class="link-text">
+      Already have an account?
+      <a href="login.html">Login here</a>
+    </p>
+  </div>
+
+  <script>
+    function togglePassword(inputId, icon) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerText = "🙈";
+      } else {
+        input.type = "password";
+        icon.innerText = "👁️";
+      }
+    }
+
+    async function registerUser() {
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const message = document.getElementById("message");
+
+      if (email === "" || password === "") {
+        message.innerText = "Please fill all fields";
+        message.style.color = "red";
+        return;
+      }
+
+      const response = await fetch("/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.text();
+      message.innerText = data;
+
+      if (data === "User registered") {
+        message.style.color = "green";
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1500);
+      } else {
+        message.style.color = "red";
+      }
+    }
+  </script>
+
+</body>
+</html>
