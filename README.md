@@ -220,4 +220,4 @@ This project uses environment variables for private data such as MySQL password 
 
 ## Author
 
-Atik Bilal
+Ateeque Belal
