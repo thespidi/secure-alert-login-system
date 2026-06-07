@@ -104,15 +104,110 @@ app.post('/login', (req, res) => {
 });
 
 /* =========================
+   GYM EXERCISE ROUTES
+========================= */
+
+// Get all exercises for logged-in user
+app.get('/exercises', (req, res) => {
+  const email = req.query.email;
+
+  db.query(
+    "SELECT * FROM user_exercises WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.json({ error: "Database error" });
+      }
+
+      res.json(results);
+    }
+  );
+});
+
+// Add new exercise
+app.post('/exercises', (req, res) => {
+  const { email, day, exercise, setsReps, working } = req.body;
+
+  db.query(
+    "INSERT INTO user_exercises (email, day, exercise, setsReps, working) VALUES (?, ?, ?, ?, ?)",
+    [email, day, exercise, setsReps, working],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send("Error adding exercise");
+      }
+
+      res.send("Exercise added");
+    }
+  );
+});
+
+// Update exercise
+app.put('/exercises/:id', (req, res) => {
+  const id = req.params.id;
+  const { day, exercise, setsReps, working } = req.body;
+
+  db.query(
+    "UPDATE user_exercises SET day = ?, exercise = ?, setsReps = ?, working = ? WHERE id = ?",
+    [day, exercise, setsReps, working, id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send("Error updating exercise");
+      }
+
+      res.send("Exercise updated");
+    }
+  );
+});
+
+// Delete exercise
+app.delete('/exercises/:id', (req, res) => {
+  const id = req.params.id;
+
+  db.query(
+    "DELETE FROM user_exercises WHERE id = ?",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send("Error deleting exercise");
+      }
+
+      res.send("Exercise deleted");
+    }
+  );
+});
+
+/* =========================
    OPEN LOGIN PAGE BY DEFAULT
 ========================= */
+app.get('/user-info', (req, res) => {
+  const email = req.query.email;
+
+  db.query(
+    "SELECT email, failedAttempts, isLocked FROM users WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.json({ error: "Database error" });
+      }
+
+      if (results.length === 0) {
+        return res.json({ error: "User not found" });
+      }
+
+      res.json(results[0]);
+    }
+  );
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-/* =========================
-   START SERVER
-========================= */
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });

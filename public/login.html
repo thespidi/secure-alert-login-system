@@ -63,6 +63,13 @@
 
       if (data === "Login success") {
         message.style.color = "green";
+
+        localStorage.setItem("userEmail", email);
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1000);
+
       } else {
         message.style.color = "red";
       }

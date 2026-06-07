@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - Secure Alert Login System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <h1>Secure User Dashboard</h1>
+
+    <div class="welcome-box">
+      <h2>Welcome</h2>
+      <p id="userEmail">Loading...</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Account Status</h3>
+        <p id="accountStatus">Active</p>
+      </div>
+
+      <div class="card">
+        <h3>Failed Attempts</h3>
+        <p id="failedAttempts">0</p>
+      </div>
+
+      <div class="card">
+        <h3>Email Alert</h3>
+        <p>Enabled</p>
+      </div>
+
+      <div class="card">
+        <h3>Password Security</h3>
+        <p>Protected with bcrypt</p>
+      </div>
+    </div>
+
+    <div class="tips-box">
+      <h2>Security Tips</h2>
+      <ul>
+        <li>Use a strong password.</li>
+        <li>Do not share your password.</li>
+        <li>Logout after using the system.</li>
+        <li>Check email alerts for suspicious activity.</li>
+      </ul>
+    </div>
+    <a href="gym.html">
+  <button>View Gym Routine</button>
+</a>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    async function loadDashboard() {
+      const email = localStorage.getItem("userEmail");
+
+      if (!email) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const response = await fetch(`/user-info?email=${email}`);
+      const data = await response.json();
+
+      document.getElementById("userEmail").innerText = data.email;
+      document.getElementById("failedAttempts").innerText = data.failedAttempts;
+
+      if (data.isLocked == 1) {
+        document.getElementById("accountStatus").innerText = "Locked";
+        document.getElementById("accountStatus").style.color = "red";
+      } else {
+        document.getElementById("accountStatus").innerText = "Active";
+        document.getElementById("accountStatus").style.color = "green";
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("userEmail");
+      window.location.href = "login.html";
+    }
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>
